@@ -1,0 +1,59 @@
+
+
+#upload your data as data
+#plot data to see the cycle and trend
+plot(1:100, data, xlim = c(0, 120), ylim=c(80, 250))
+#connect the datapoints with line
+lines(1:100, data, type="l")
+
+#check auto-correaltions
+acf(data, lag.max=22)
+pacf(data, lag.max=22)
+
+
+
+#take 1st order diff.
+z = diff(wwwusage, 1, 1)
+plot(1:99, z, xlim = c(0, 120), ylim=c(-15, 15))
+lines(1:99, z, type="l" )
+
+acf(z, lag.max=22)
+pacf(z, lag.max=22)
+
+
+
+#take 2nd diff.
+z = diff(data, 1, 2)
+plot(1:98, z, xlim = c(0, 120), ylim=c(-15, 15))
+lines(1:98, z, type="l" )
+
+acf(z, lag.max=22)
+pacf(z, lag.max=22)
+
+
+fit1 = arima(data, order = c(0,2,2))
+tsdiag(fit1)
+
+fit2 = arima(data, order = c(2,2,0))
+tsdiag(fit2)
+
+
+library(forecast)
+fit3 = auto.arima(data)
+tsdiag(fit3)
+
+
+#compare AICs for different models
+
+# fitted values
+plot(1:100, data, xlim = c(0, 120), ylim=c(80, 330))
+lines(1:100, data, type="l" )
+lines(1:100, data-fit2$residuals, type="l", col="red")
+
+# forecast for 10 steps ahead
+forecast = predict(fit2, n.ahead=10)
+lines(101:110, forecast$pred, type="o", col="red")
+lines(101:110, forecast$pred-1.96*forecast$se, col="blue")
+lines(101:110, forecast$pred+1.96*forecast$se, col="blue")
+
+
